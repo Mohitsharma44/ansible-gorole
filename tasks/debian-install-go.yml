@@ -35,10 +35,11 @@
         dest: "{{ GODEST }}/go1.4-bootstrap.tar.gz"
         checksum: "sha1:332b64236d30a8805fc8dd8b3a269915b4c507fe"
 
-    - name: Uncompressing
+    - name: Uncompressing Go bootstrap
       unarchive:
         src: "{{ GODEST }}/go1.4-bootstrap.tar.gz"
         dest: "{{ GODEST }}/go1.4-bootstrap"
+        creates: "{{ GODEST }}/go1.4-bootstrap/go/bin"
         remote_src: yes
 
     - name: Cloning Go repo
@@ -46,8 +47,8 @@
         repo: "https://go.googlesource.com/go"
         dest: "{{ GODEST }}/go"
         version: "go{{ GOVER }}"
-        force: yes
-        update: yes
+        force: no
+        update: no
 
     - name: Adding to environment variables for all users
       blockinfile:

@@ -1,9 +1,12 @@
 ---
 # tasks file for gorole
 - name: Check if go is installed
-  shell: go --version
+  shell: go version
   register: go_check
   failed_when: False
+  changed_when: "go_check.rc != 0"
+  environment:
+    PATH: $PATH:{{ GOPATH }}
 
 - debug:
     msg: "{{ go_check.rc }}"

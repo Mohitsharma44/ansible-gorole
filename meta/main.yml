@@ -29,10 +29,10 @@ galaxy_info:
   #github_branch:
 
 
-    platforms:
-      - name: Debian
-        versions:
-          - all
+  platforms:
+    - name: Debian
+      versions:
+        - all
   #
   # platforms is a list of platforms, and each platform has a name and a list of versions.
   #

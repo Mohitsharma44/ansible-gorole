@@ -11,6 +11,7 @@
       unarchive:
         src: "{{ GODEST }}/go{{ GOVER }}.linux-amd64.tar.gz"
         dest: "{{ GODEST }}"
+        creates: "{{ GOPATH }}/go"
         remote_src: yes
 
     - name: Adding to environment variables for all users

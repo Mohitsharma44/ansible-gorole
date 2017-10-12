@@ -1,0 +1,11 @@
+---
+# If Go should be built from source
+BUILD_FROM_SRC: true
+
+GODEST: /usr/local
+GOROOT: "{{ GODEST }}/go"
+GOPATH: "{{ GOROOT }}/bin"
+
+GOVER: 1.9.1
+# https://golang.org/dl/
+GOVER_CHECKSUM: "sha256:07d81c6b6b4c2dcf1b5ef7c27aaebd3691cdb40548500941f92b221147c5d9c7"

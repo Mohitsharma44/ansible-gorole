@@ -1,0 +1,14 @@
+---
+# tasks file for gorole
+- name: Check if go is installed
+  shell: go --version
+  register: go_check
+  failed_when: False
+
+- debug:
+    msg: "{{ go_check.rc }}"
+
+- block:
+    - include_tasks: debian-setup.yml
+    - include_tasks: debian-install-go.yml
+  when: go_check.rc != 0

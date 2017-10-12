@@ -1,0 +1,70 @@
+---
+
+- block:
+    - name: Downloading GO binary distribution
+      get_url:
+        url: "https://storage.googleapis.com/golang/go{{ GOVER }}.linux-amd64.tar.gz"
+        dest: "{{ GODEST }}/go{{ GOVER }}.linux-amd64.tar.gz"
+        checksum: "{{ GOVER_CHECKSUM }}"
+
+    - name: Uncompressing
+      unarchive:
+        src: "{{ GODEST }}/go{{ GOVER }}.linux-amd64.tar.gz"
+        dest: "{{ GODEST }}"
+        remote_src: yes
+
+    - name: Adding to environment variables for all users
+      blockinfile:
+        path: /etc/profile
+        insertafter: EOF
+        block: |
+          # Added by Ansible
+          export GOROOT={{ GOROOT }}
+          export PATH=$PATH:{{ GOPATH }}
+        create: yes
+
+  when: BUILD_FROM_SRC == false
+  become: true
+  become_user: root
+
+- block:
+    - name: Downloading Go 1.4.3 to as bootstrap to build Go {{ GOVER }}
+      get_url:
+        url: "https://storage.googleapis.com/golang/go1.4.3.linux-amd64.tar.gz"
+        dest: "{{ GODEST }}/go1.4-bootstrap.tar.gz"
+        checksum: "sha1:332b64236d30a8805fc8dd8b3a269915b4c507fe"
+
+    - name: Uncompressing
+      unarchive:
+        src: "{{ GODEST }}/go1.4-bootstrap.tar.gz"
+        dest: "{{ GODEST }}/go1.4-bootstrap"
+        remote_src: yes
+
+    - name: Cloning Go repo
+      git:
+        repo: "https://go.googlesource.com/go"
+        dest: "{{ GODEST }}/go"
+        version: "go{{ GOVER }}"
+        force: yes
+        update: yes
+
+    - name: Adding to environment variables for all users
+      blockinfile:
+        path: /etc/profile
+        insertafter: EOF
+        block: |
+          # Added by Ansible
+          export GOROOT_BOOTSTRAP={{ GODEST }}/go1.4-bootstrap/go
+          export PATH=$PATH:{{ GOPATH }}
+        create: yes
+
+    - name: Building Go ...
+      shell: /bin/bash all.bash
+      args:
+        chdir: "{{ GODEST }}/go/src"
+      environment:
+        GOROOT_BOOTSTRAP: "{{ GODEST }}/go1.4-bootstrap/go"
+
+  when: BUILD_FROM_SRC == true
+  become: true
+  become_user: root

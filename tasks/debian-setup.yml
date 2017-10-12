@@ -1,0 +1,19 @@
+---
+
+- name: Install git
+  apt:
+    name: git
+    state: present
+  become: yes
+
+- name: Creating directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+    recurse: yes
+  with_items:
+    - "{{ GODEST }}/go1.4-bootstrap"
+  become: yes
